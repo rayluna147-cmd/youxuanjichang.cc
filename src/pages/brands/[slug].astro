@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAuthorizedBrands } from '../../data/brands';
+import type { AuthorizedBrand } from '../../data/whitelist';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return getAuthorizedBrands().map((brand) => ({
+    params: { slug: brand.slug },
+    props: { brand },
+  }));
+}
+
+interface Props {
+  brand: AuthorizedBrand;
+}
+
+const { brand } = Astro.props;
+const others = getAuthorizedBrands().filter((b) => b.slug !== brand.slug);
+const mainPlan = brand.plans[0];
+const unitCost = mainPlan ? ((mainPlan.priceCny / mainPlan.trafficGb) * 100).toFixed(2) : '—';
+
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '品牌档案库', url: '/brands/' },
+    { name: brand.name, url: `/brands/${brand.slug}/` },
+  ]),
+];
+---
+
+<BaseLayout
+  title={`${brand.name}怎么样？2026 品牌档案、套餐价格与优惠码 ${brand.couponCode || ''}`}
+  description={`${brand.name}（综合排名第 ${brand.rank}）真实白名单档案：打折前 ¥${mainPlan?.priceCny}/月 ${mainPlan?.trafficGb}GB，专属优惠码 ${brand.couponCode}，含排名原因、优缺点与独立深度评测入口。`}
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section={brand.accentColor}>
+    <div class="container">
+      <div class="eyebrow">RANK #{brand.rank} · {brand.enName}</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        {brand.name} <span class="spectrum-text">品牌档案</span>
+      </h1>
+      <p class="lead">{brand.tagline}</p>
+
+      <div class="cta-row">
+        <a
+          href={brand.affiliateUrl}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+          class="btn btn-primary"
+          data-magnetic
+        >
+          前往 {brand.name} 官网注册 ↗
+        </a>
+        <a href={`/reviews/${brand.reviewSlug}/`} class="btn" data-magnetic>阅读 2500 字独立深度评测 →</a>
+        {brand.couponCode && <span class="pill mono">专属优惠码：{brand.couponCode}</span>}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container grid-2">
+      <div class="panel card-pad">
+        <div class="eyebrow">RANKING RATIONALE · 排名原因</div>
+        <h2 class="display-md" style="margin: 0.6rem 0 0.8rem;">为什么排在综合第 {brand.rank} 名？</h2>
+        <p style="color: var(--text-secondary); margin: 0;">{brand.rankReason}</p>
+      </div>
+
+      <div class="panel card-pad">
+        <div class="eyebrow">PLAN SNAPSHOT · 核心套餐参数</div>
+        <div class="kv-grid">
+          <div class="kv"><span>打折前月费</span><strong class="mono">¥{mainPlan?.priceCny} / 月</strong></div>
+          <div class="kv"><span>每月流量</span><strong class="mono">{mainPlan?.trafficGb} GB</strong></div>
+          <div class="kv"><span>折算每 100GB</span><strong class="mono">¥{unitCost}</strong></div>
+          <div class="kv"><span>专属优惠码</span><strong class="mono" style="color: var(--spectrum-accent);">{brand.couponCode || '无'}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container grid-2" style="margin-top: 1.5rem;">
+      <div class="panel card-pad">
+        <h3 style="margin-top: 0; color: var(--spectrum-emerald);">核心优势</h3>
+        <ul class="clean-list">
+          {brand.pros.map((p) => <li>{p}</li>)}
+        </ul>
+      </div>
+      <div class="panel card-pad">
+        <h3 style="margin-top: 0; color: var(--spectrum-amber);">购买前需注意</h3>
+        <ul class="clean-list">
+          {brand.cons.map((c) => <li>{c}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top: 2rem;">
+      <div class="panel card-pad meta-strip mono">
+        <span>资料来源：{brand.source}</span>
+        <span>最后更新：{brand.updatedAt}</span>
+        <span>邀请码：{brand.inviteCode || '内置链接'}</span>
+      </div>
+    </div>
+
+    <div class="container" style="margin-top: 3rem;">
+      <div class="eyebrow">OTHER BRANDS · 同批白名单横向参考</div>
+      <div class="grid-3" style="margin-top: 1rem;">
+        {
+          others.map((o) => (
+            <a href={`/brands/${o.slug}/`} class="panel card-pad">
+              <span class="mono" style={`font-size: 0.74rem; color: ${o.accentColor};`}>RANK #{o.rank}</span>
+              <h3 style="margin: 0.35rem 0;">{o.name}</h3>
+              <span class="mono" style="font-size: 0.82rem; color: var(--text-secondary);">
+                ¥{o.plans[0]?.priceCny}/月 · {o.plans[0]?.trafficGb}GB · 码 {o.couponCode}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.06rem; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 0.9rem; align-items: center; margin-top: 1.6rem; }
+  .section-sm { padding: 1.5rem 0 4rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr; gap: 1.2rem; }
+  @media (min-width: 860px) {
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  }
+  .card-pad { padding: 1.6rem; }
+  .kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .kv { display: flex; flex-direction: column; gap: 0.25rem; }
+  .kv span { font-size: 0.78rem; color: var(--text-muted); }
+  .kv strong { font-size: 1.15rem; }
+  .clean-list { margin: 0; padding-left: 1.25rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.55rem; }
+  .meta-strip { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: 0.78rem; color: var(--text-muted); }
+</style>

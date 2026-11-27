@@ -48,7 +48,7 @@ const featuredArticles = articles.filter((a) => a.data.featured).slice(0, 3);
         </div>
         <div class="stat-row">
           <span class="stat-label">当前授权品牌</span>
-          <span class="stat-val mono">{brands.length} / 待导入真实资料</span>
+          <span class="stat-val mono">{brands.length} 家已上线 · 按综合性价比排序</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">原创技术专题与指南</span>
@@ -144,11 +144,21 @@ const featuredArticles = articles.filter((a) => a.data.featured).slice(0, 3);
         brands.length > 0 ? (
           <div class="brand-gallery">
             {brands.map((brand) => (
-              <a href={`/brands/${brand.slug}/`} class="panel brand-card" data-tilt-card>
-                <div class="mono" style={`color: ${brand.accentColor};`}>{brand.enName}</div>
-                <h3 class="display-md">{brand.name}</h3>
-                <p>{brand.tagline}</p>
-              </a>
+              <article class="panel brand-card" data-tilt-card style={`border-top: 2px solid ${brand.accentColor};`}>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="mono" style={`color: ${brand.accentColor}; font-size: 0.78rem;`}>RANK #{brand.rank} · {brand.enName}</span>
+                  {brand.couponCode && <span class="pill mono">码 {brand.couponCode}</span>}
+                </div>
+                <h3 class="display-md" style="margin: 0.6rem 0 0.35rem;">{brand.name}</h3>
+                <div class="mono" style="font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.65rem;">
+                  打折前 ¥{brand.plans[0]?.priceCny}/月 · {brand.plans[0]?.trafficGb}GB 流量
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 1.1rem; flex: 1;">{brand.rankReason}</p>
+                <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                  <a href={brand.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" class="btn btn-primary" style="padding: 0.55rem 1rem; font-size: 0.84rem;">直达官网 ↗</a>
+                  <a href={`/reviews/${brand.reviewSlug}/`} class="btn" style="padding: 0.55rem 1rem; font-size: 0.84rem;">深度评测</a>
+                </div>
+              </article>
             ))}
           </div>
         ) : (
@@ -381,6 +391,23 @@ const featuredArticles = articles.filter((a) => a.data.featured).slice(0, 3);
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.04);
     color: var(--text-secondary);
+  }
+
+  /* Brand Gallery */
+  .brand-gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 860px) {
+    .brand-gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .brand-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Whitelist Stage */

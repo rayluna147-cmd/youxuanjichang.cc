@@ -90,10 +90,21 @@ const schemas = [
         brands.length > 0 ? (
           <div class="grid-3">
             {brands.map((b) => (
-              <a href={`/brands/${b.slug}/`} class="panel card-pad">
-                <h3>{b.name}</h3>
-                <p>{b.tagline}</p>
-              </a>
+              <article class="panel card-pad" style={`border-top: 2px solid ${b.accentColor};`}>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span class="mono" style={`color: ${b.accentColor}; font-size: 0.78rem;`}>第 {b.rank} 名</span>
+                  {b.couponCode && <span class="pill mono">优惠码 {b.couponCode}</span>}
+                </div>
+                <h3 style="margin: 0.45rem 0 0.25rem; font-size: 1.3rem;">{b.name}</h3>
+                <div class="mono" style="font-size: 0.86rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+                  打折前 ¥{b.plans[0]?.priceCny}/月 · {b.plans[0]?.trafficGb}GB
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0 0 1rem; flex: 1;">{b.rankReason}</p>
+                <div style="display: flex; gap: 0.55rem; flex-wrap: wrap;">
+                  <a href={b.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" class="btn btn-primary" style="padding: 0.5rem 0.95rem; font-size: 0.82rem;">直达注册 ↗</a>
+                  <a href={`/reviews/${b.reviewSlug}/`} class="btn" style="padding: 0.5rem 0.95rem; font-size: 0.82rem;">看评测</a>
+                </div>
+              </article>
             ))}
           </div>
         ) : (
