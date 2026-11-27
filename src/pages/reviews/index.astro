@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const reviews = await getCollection('reviews', ({ data }) => !data.draft);
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '独立深度评测', url: '/reviews/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="独立深度评测 — 数字杂志级单品牌实测报告"
+  description="优选机场独立深度评测频道：每篇正式品牌评测不少于 2000 字，覆盖链路架构、套餐折算、优缺点、适用人群与真实资料来源。"
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section="#fb7185">
+    <div class="container">
+      <div class="eyebrow">INDEPENDENT REVIEWS · /REVIEWS/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        独立<span class="spectrum-text">深度评测</span>
+      </h1>
+      <p class="lead">
+        所有正式品牌评测均遵循不少于 2000 字的深度写作规范，拒绝模板化凑字与虚假跑分。
+      </p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      {
+        reviews.length > 0 ? (
+          <div class="reviews-grid">
+            {reviews.map((r) => (
+              <a href={`/reviews/${r.slug}/`} class="panel review-card">
+                <span class="mono" style="font-size: 0.74rem; color: var(--text-muted);">{r.data.updatedAt}</span>
+                <h2>{r.data.title}</h2>
+                <p>{r.data.description}</p>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="panel empty-stage">
+            <h2 class="display-md" style="margin: 0 0 0.8rem;">当前独立品牌评测：0 篇（等待正式品牌资料导入）</h2>
+            <p style="color: var(--text-secondary); max-width: 64ch;">
+              本站拒绝在缺乏真实品牌资料的情况下虚构 2000 字评测报告。在正式品牌加入白名单前，推荐你先阅读本站已发布的 8 篇原创技术与选购指南。
+            </p>
+            <a href="/guides/" class="btn btn-primary" style="margin-top: 1.2rem;">浏览 8 篇原创专题指南 →</a>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.05rem; }
+  .section-sm { padding: 1.5rem 0 4rem; }
+  .empty-stage { padding: clamp(1.6rem, 4vw, 3rem); }
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+  .review-card { padding: 1.5rem; }
+</style>

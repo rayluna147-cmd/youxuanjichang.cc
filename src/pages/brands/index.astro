@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAuthorizedBrands } from '../../data/brands';
+import { WHITELIST_META } from '../../data/whitelist';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const brands = getAuthorizedBrands();
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '品牌档案库', url: '/brands/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="品牌白名单档案库 — 严格准入与真实资料核验"
+  description="优选机场独立品牌白名单档案库：仅收录经项目所有者明确授权、具备真实套餐与独立推广链接的品牌，绝不虚构测速与评分。"
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section="#34d399">
+    <div class="container">
+      <div class="eyebrow">BRAND ARCHIVE · /BRANDS/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        品牌白名单<span class="spectrum-text">独立档案库</span>
+      </h1>
+      <p class="lead">
+        每一家进入优选机场的品牌都必须通过白名单准入审核：提供真实套餐数据、完整邀请参数、资料来源、更新时间，并配套不少于 2000 字的独立深度评测。
+      </p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      {
+        brands.length > 0 ? (
+          <div class="brands-grid">
+            {brands.map((b) => (
+              <a href={`/brands/${b.slug}/`} class="panel brand-tile">
+                <span class="mono" style={`color: ${b.accentColor};`}>{b.enName}</span>
+                <h2>{b.name}</h2>
+                <p>{b.tagline}</p>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="panel empty-stage">
+            <div class="mono" style="color: var(--spectrum-emerald); font-size: 0.78rem;">
+              POLICY v{WHITELIST_META.policyVersion} · LAST AUDITED {WHITELIST_META.lastAuditedAt}
+            </div>
+            <h2 class="display-md" style="margin: 0.8rem 0;">当前白名单已收录：0 家（等待导入真实授权品牌资料）</h2>
+            <p style="color: var(--text-secondary); max-width: 66ch;">
+              为确保本站商业推广系统完全独立、合规且真实可信，我们未继承任何旧站推广链接，也未捏造示例品牌。
+              当你准备好正式品牌资料后，只需按 <code>BRAND_WHITELIST.md</code> 规范写入 <code>src/data/whitelist.ts</code> 并在 <code>src/content/reviews/</code> 添加对应评测，档案页与推广入口将自动生成。
+            </p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+              <a href="/select/" class="btn btn-primary">前往机场推荐核心指南 →</a>
+              <a href="/plans/" class="btn">打开套餐价格工作台</a>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.05rem; }
+  .section-sm { padding: 1.5rem 0 4rem; }
+  .empty-stage { padding: clamp(1.6rem, 4vw, 3rem); }
+  .brands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+  .brand-tile { padding: 1.6rem; }
+</style>

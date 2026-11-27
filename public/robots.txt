@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://youxuanjichang.cc/sitemap.xml
+Sitemap: https://youxuanjichang.cc/sitemap-index.xml

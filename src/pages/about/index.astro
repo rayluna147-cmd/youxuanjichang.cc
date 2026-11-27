@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '关于与评测标准', url: '/about/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="关于优选机场与白名单准入标准"
+  description="了解优选机场（youxuanjichang.cc）的 SPECTRUM 五维评测体系、独立品牌白名单制度与零虚构内容承诺。"
+  schemas={schemas}
+>
+  <section class="page-hero">
+    <div class="container">
+      <div class="eyebrow">ABOUT YOUXUAN · /ABOUT/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        关于<span class="spectrum-text">优选机场</span>
+      </h1>
+      <p class="lead">
+        优选机场（YOUXUAN / YX.）是一个独立建设的网络节点技术研究与机场推荐评测站点，致力于用透明的方法论与真实数据替代浮夸的营销榜单。
+      </p>
+    </div>
+  </section>
+
+  <section class="section-sm" id="whitelist-standard">
+    <div class="container prose" style="max-width: 78ch;">
+      <h2>一、独立品牌白名单制度</h2>
+      <p>
+        本站仅允许经项目所有者明确授权、具备完整真实资料的品牌进入商业推广系统。任何未经授权的商家、缺乏真实套餐与来源的品牌均不得上架。
+      </p>
+      <h2>二、零虚构内容承诺</h2>
+      <ul>
+        <li>绝不虚构测速截图、晚高峰延迟或主观评分；</li>
+        <li>绝不虚构品牌成立年份、历史资历或虚假优惠码；</li>
+        <li>每篇正式品牌评测不少于 2000 字，并清晰标注资料来源与最后更新时间；</li>
+        <li>严格保留静态 HTML 内容输出，确保搜索引擎与 AI 检索准确抓取核心信息。</li>
+      </ul>
+      <h2>三、联系方式</h2>
+      <p>
+        如对本站技术文章有勘误建议或白名单资料更新需求，可通过 <code>contact@youxuanjichang.cc</code> 联系编辑部。
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.06rem; }
+  .section-sm { padding: 1.5rem 0 4rem; }
+</style>

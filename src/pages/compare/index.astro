@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAuthorizedBrands } from '../../data/brands';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const brands = getAuthorizedBrands();
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '品牌横向对比', url: '/compare/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="品牌与线路横向对比工具 — IEPL 专线、BGP 中转与优化直连矩阵"
+  description="优选机场横向对比工具：从晚高峰丢包、三网兼容性、流媒体解锁、AI 风控纯净度与成本结构五大维度横向对比不同线路架构及白名单授权品牌。"
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section="#a78bfa">
+    <div class="container">
+      <div class="eyebrow">HORIZONTAL MATRIX · /COMPARE/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        线路与品牌<span class="spectrum-text">横向对比矩阵</span>
+      </h1>
+      <p class="lead">
+        拒绝模糊的「很好 / 一般」主观评价。这里以统一的技术维度横向对比四类核心跨境架构，并在白名单品牌导入后自动启用品牌双栏 PK。
+      </p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="panel table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>对比维度</th>
+              <th>IEPL / IPLC 专线</th>
+              <th>国内 BGP 中转</th>
+              <th>优化直连（CN2 GIA / 9929）</th>
+              <th>普通公网直连</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>跨境传输通道</strong></td>
+              <td>运营商私有内网直达</td>
+              <td>国内多线机房转发</td>
+              <td>运营商精品公网路由</td>
+              <td>普通公网国际出口</td>
+            </tr>
+            <tr>
+              <td><strong>晚高峰 21:00 稳定性</strong></td>
+              <td class="good">极佳（几乎零丢包）</td>
+              <td class="mid">良好（偶有轻微波动）</td>
+              <td class="mid">良好（依赖对应宽带）</td>
+              <td class="warn">较差（易拥堵丢包）</td>
+            </tr>
+            <tr>
+              <td><strong>电信/联通/移动三网均衡</strong></td>
+              <td class="good">极佳</td>
+              <td class="good">优秀</td>
+              <td class="warn">偏科（视线路归属）</td>
+              <td class="warn">差</td>
+            </tr>
+            <tr>
+              <td><strong>AI 工具与流媒体落地灵活度</strong></td>
+              <td class="good">极高（可任意搭配原生/家宽）</td>
+              <td class="good">高</td>
+              <td class="mid">受限于机房所在段</td>
+              <td class="warn">低</td>
+            </tr>
+            <tr>
+              <td><strong>典型月付预算定位</strong></td>
+              <td class="mono">¥28 – ¥120</td>
+              <td class="mono">¥15 – ¥35</td>
+              <td class="mono">¥25 – ¥60</td>
+              <td class="mono">¥10 – ¥20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel brand-pk" style="margin-top: 2rem; padding: 1.8rem;">
+        <div class="eyebrow">BRAND SIDE-BY-SIDE PK</div>
+        <h2 class="display-md" style="margin: 0.7rem 0;">白名单品牌双栏对比（当前已收录：{brands.length} 家）</h2>
+        {
+          brands.length >= 2 ? (
+            <p style="color: var(--text-secondary);">已检测到多个白名单品牌，可在此直接横向对比套餐与特性。</p>
+          ) : (
+            <p style="color: var(--text-secondary); margin: 0;">
+              当 <code>src/data/whitelist.ts</code> 中导入 2 家及以上正式授权品牌后，此处将自动激活交互式品牌 PK 对比器。当前严格遵循零虚构原则，不展示模拟品牌对比数据。
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.05rem; }
+  .section-sm { padding: 2rem 0 4rem; }
+  .table-wrap { overflow-x: auto; padding: 1.2rem; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+  .compare-table th, .compare-table td { padding: 1rem; border-bottom: 1px solid var(--border-hairline); text-align: left; }
+  .compare-table th { color: var(--text-primary); background: rgba(255, 255, 255, 0.03); }
+  .good { color: var(--spectrum-emerald); }
+  .mid { color: var(--spectrum-cobalt); }
+  .warn { color: var(--spectrum-amber); }
+</style>

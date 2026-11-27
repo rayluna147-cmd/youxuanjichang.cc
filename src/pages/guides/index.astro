@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TOPIC_HUBS } from '../../data/topics';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort(
+  (a, b) => new Date(b.data.updatedAt).getTime() - new Date(a.data.updatedAt).getTime()
+);
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '专题与指南', url: '/guides/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="专题与原创指南 — IEPL 专线、流媒体解锁、AI 防风控与客户端实战"
+  description="优选机场完整内容矩阵：5 大二级细分技术专题与全部原创长尾指南，覆盖 IEPL/IPLC 专线、BGP 中转、Netflix/Disney+ 解锁、ChatGPT/Claude 防风控与 Clash/Sing-box 分流。"
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section="#fbbf24">
+    <div class="container">
+      <div class="eyebrow">KNOWLEDGE MATRIX · /GUIDES/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        专题与<span class="spectrum-text">原创指南</span>
+      </h1>
+      <p class="lead">
+        共收录 {TOPIC_HUBS.length} 大细分搜索专题与 {articles.length} 篇深度原创长文，全部保留完整静态 HTML 输出，支持 Pagefind 全文检索。
+      </p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="eyebrow">TIER 2 · 细分专题</div>
+      <h2 class="display-md" style="margin: 0.6rem 0 1.4rem;">五大核心技术专题</h2>
+      <div class="grid-3">
+        {
+          TOPIC_HUBS.map((t) => (
+            <a href={`/topics/${t.slug}/`} class="panel card-pad" style={`border-top: 2px solid ${t.accent};`}>
+              <span class="mono" style={`font-size: 0.72rem; color: ${t.accent};`}>{t.code}</span>
+              <h3 style="margin: 0.45rem 0;">{t.title}</h3>
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">{t.description}</p>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="eyebrow" style="margin-top: 3.5rem;">TIER 3 · 长尾深度文章</div>
+      <h2 class="display-md" style="margin: 0.6rem 0 1.4rem;">全部原创文章（{articles.length} 篇）</h2>
+      <div class="grid-2">
+        {
+          articles.map((a) => (
+            <a href={`/articles/${a.slug}/`} class="panel card-pad">
+              <div style="display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted);" class="mono">
+                <span>{a.data.category}</span>
+                <span>更新于 {a.data.updatedAt} · {a.data.readingMinutes} 分钟</span>
+              </div>
+              <h3 style="margin: 0.55rem 0; font-size: 1.15rem;">{a.data.title}</h3>
+              <p style="color: var(--text-secondary); font-size: 0.92rem; margin: 0 0 0.8rem;">{a.data.description}</p>
+              <span class="mono" style="font-size: 0.78rem; color: var(--spectrum-accent);">阅读全文 →</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.05rem; }
+  .section-sm { padding: 1.5rem 0 4rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr; gap: 1.2rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.2rem; }
+  @media (min-width: 860px) {
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .card-pad { padding: 1.5rem; display: flex; flex-direction: column; }
+</style>

@@ -1,0 +1,62 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<a href="/" class="brand-logo" aria-label="优选机场 YOUXUAN 首页">
+  <svg class="brand-mark" width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="yx-prism-grad" x1="2" y1="2" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#38bdf8" />
+        <stop offset="42%" stop-color="#a78bfa" />
+        <stop offset="76%" stop-color="#fb7185" />
+        <stop offset="100%" stop-color="#fbbf24" />
+      </linearGradient>
+    </defs>
+    <polygon points="18,3 33,29 3,29" stroke="url(#yx-prism-grad)" stroke-width="2.2" fill="rgba(56,189,248,0.06)" />
+    <line x1="18" y1="3" x2="18" y2="29" stroke="url(#yx-prism-grad)" stroke-width="1.4" opacity="0.7" />
+    <circle cx="18" cy="19" r="3.2" fill="url(#yx-prism-grad)" />
+  </svg>
+  {
+    !compact && (
+      <span class="brand-text">
+        <span class="brand-cn">优选机场</span>
+        <span class="brand-en mono">YOUXUAN / YX.</span>
+      </span>
+    )
+  }
+</a>
+
+<style>
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.72rem;
+    position: relative;
+    z-index: 60;
+  }
+  .brand-mark {
+    transition: transform 0.45s var(--ease-expo);
+  }
+  .brand-logo:hover .brand-mark {
+    transform: rotate(12deg) scale(1.06);
+  }
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .brand-cn {
+    font-size: 1.02rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+  }
+  .brand-en {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.14em;
+  }
+</style>

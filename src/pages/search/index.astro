@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '全文搜索', url: '/search/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="全站中文全文搜索 — Pagefind 实时检索"
+  description="在优选机场（youxuanjichang.cc）中实时检索机场推荐指南、IEPL/IPLC 专线技术、流媒体解锁、AI 防风控与套餐对比内容。"
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section="#38bdf8">
+    <div class="container">
+      <div class="eyebrow">PAGEFIND FULL-TEXT SEARCH · /SEARCH/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        全站中文<span class="spectrum-text">实时检索</span>
+      </h1>
+      <p class="lead">输入关键词（如：IEPL、Netflix、ChatGPT、Clash、按量付费）即时搜索全站静态索引。</p>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="panel search-box" data-pagefind-ignore>
+        <div id="pagefind-search"></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+
+<script is:inline>
+  function initPagefind() {
+    const container = document.getElementById('pagefind-search');
+    if (!container || container.dataset.loaded === 'true') return;
+    container.dataset.loaded = 'true';
+
+    const script = document.createElement('script');
+    script.src = '/pagefind/pagefind-ui.js';
+    script.onload = () => {
+      if (window.PagefindUI) {
+        new window.PagefindUI({
+          element: '#pagefind-search',
+          showSubResults: true,
+          translations: {
+            placeholder: '搜索：IEPL、ChatGPT、Netflix、Clash、性价比...',
+            zero_results: '未找到与“[SEARCH_TERM]”相关的页面',
+          },
+        });
+      }
+    };
+    script.onerror = () => {
+      container.innerHTML =
+        '<p style="color:#a1adc4;margin:0;">提示：Pagefind 搜索索引会在执行 <code>npm run build</code> 后生成，预览构建产物即可使用完整中文检索。</p>';
+    };
+    document.head.appendChild(script);
+  }
+  document.addEventListener('astro:page-load', initPagefind);
+</script>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); margin-top: 1rem; }
+  .section-sm { padding: 1.5rem 0 5rem; }
+  .search-box { padding: 1.8rem; }
+  :global(.pagefind-ui) {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: #38bdf8;
+    --pagefind-ui-text: #f4f6fb;
+    --pagefind-ui-background: #0d1017;
+    --pagefind-ui-border: rgba(255, 255, 255, 0.14);
+    --pagefind-ui-tag: #141925;
+    --pagefind-ui-border-radius: 12px;
+  }
+</style>

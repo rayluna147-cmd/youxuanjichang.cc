@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { TOPIC_HUBS, type TopicHub } from '../../data/topics';
+import { buildBreadcrumbSchema, buildFaqSchema } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return TOPIC_HUBS.map((topic) => ({
+    params: { slug: topic.slug },
+    props: { topic },
+  }));
+}
+
+interface Props {
+  topic: TopicHub;
+}
+
+const { topic } = Astro.props;
+const allArticles = await getCollection('articles', ({ data }) => !data.draft);
+const relatedArticles = allArticles.filter(
+  (a) => a.data.topicSlug === topic.slug || topic.relatedArticleSlugs.includes(a.slug)
+);
+
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '专题指南', url: '/guides/' },
+    { name: topic.shortTitle, url: `/topics/${topic.slug}/` },
+  ]),
+  buildFaqSchema(topic.faq),
+];
+---
+
+<BaseLayout title={topic.title} description={topic.description} schemas={schemas}>
+  <section class="page-hero" data-accent-section={topic.accent}>
+    <div class="container">
+      <div class="eyebrow">{topic.code} · {topic.targetKeyword}</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">{topic.title}</h1>
+      <p class="lead">{topic.description}</p>
+      <div class="kw-row">
+        {topic.secondaryKeywords.map((kw) => <span class="pill">{kw}</span>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="eyebrow">TOPIC ARTICLES · 专题深度文章</div>
+      <h2 class="display-md" style="margin: 0.6rem 0 1.4rem;">本专题精选指南（{relatedArticles.length} 篇）</h2>
+      <div class="grid-2">
+        {
+          relatedArticles.map((a) => (
+            <a href={`/articles/${a.slug}/`} class="panel card-pad">
+              <div class="mono" style="font-size: 0.74rem; color: var(--text-muted);">
+                {a.data.category} · {a.data.readingMinutes} MIN READ
+              </div>
+              <h3 style="margin: 0.5rem 0; font-size: 1.15rem;">{a.data.title}</h3>
+              <p style="color: var(--text-secondary); font-size: 0.92rem; margin: 0 0 0.8rem;">{a.data.description}</p>
+              <span class="mono" style="font-size: 0.78rem; color: var(--spectrum-accent);">阅读全文 →</span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="eyebrow" style="margin-top: 3.5rem;">FAQ · 专题常见问题</div>
+      <h2 class="display-md" style="margin: 0.6rem 0 1.2rem;">高频疑问解答</h2>
+      <div class="faq-list">
+        {
+          topic.faq.map((item) => (
+            <details class="panel faq-item" open>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 66ch; margin-top: 1rem; font-size: 1.06rem; }
+  .kw-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+  .section-sm { padding: 1.5rem 0 4rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.2rem; }
+  @media (min-width: 860px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+  .card-pad { padding: 1.5rem; display: flex; flex-direction: column; }
+  .faq-list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .faq-item { padding: 1.2rem 1.4rem; }
+  .faq-item summary { font-weight: 700; cursor: pointer; }
+  .faq-item p { color: var(--text-secondary); margin: 0.75rem 0 0; }
+</style>

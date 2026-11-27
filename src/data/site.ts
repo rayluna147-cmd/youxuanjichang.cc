@@ -1,0 +1,48 @@
+export const SITE = {
+  name: '优选机场',
+  brandEn: 'YOUXUAN',
+  brandShort: 'YX.',
+  tagline: 'SPECTRUM 动态光谱 · 独立网络节点评测与机场推荐指南',
+  description:
+    '优选机场（youxuanjichang.cc）专注中立、透明的机场推荐、IEPL/IPLC 专线解析、流媒体解锁实测、AI 工具网络优化与套餐性价比对比。严格执行白名单准入，拒绝虚假测速与虚构参数。',
+  url: 'https://youxuanjichang.cc',
+  domain: 'youxuanjichang.cc',
+  locale: 'zh-CN',
+  lang: 'zh-Hans',
+  themeColor: '#06070a',
+  indexNowKey: '7e9c4a2b8f1d6e3a5c0b9d4f2a8e1c6b',
+  email: 'contact@youxuanjichang.cc',
+  author: '优选机场编辑部',
+  nav: [
+    { label: '机场推荐', en: 'SELECT', href: '/select/', badge: 'CORE' },
+    { label: '品牌档案', en: 'BRANDS', href: '/brands/' },
+    { label: '深度评测', en: 'REVIEWS', href: '/reviews/' },
+    { label: '套餐工作台', en: 'PLANS', href: '/plans/' },
+    { label: '横向对比', en: 'COMPARE', href: '/compare/' },
+    { label: '专题指南', en: 'GUIDES', href: '/guides/' },
+    { label: '全文搜索', en: 'SEARCH', href: '/search/' },
+  ],
+  footerLinks: {
+    core: [
+      { label: '机场推荐总览', href: '/select/' },
+      { label: '品牌白名单档案', href: '/brands/' },
+      { label: '独立深度评测', href: '/reviews/' },
+      { label: '套餐价格工作台', href: '/plans/' },
+      { label: '品牌横向对比', href: '/compare/' },
+    ],
+    topics: [
+      { label: 'IEPL / IPLC 专线专题', href: '/topics/iepl-iplc/' },
+      { label: '流媒体解锁与原生 IP', href: '/topics/streaming-unlock/' },
+      { label: 'AI 工具网络优化', href: '/topics/ai-tools-network/' },
+      { label: '代理协议演进对比', href: '/topics/protocols/' },
+      { label: '中转与直连线路解析', href: '/topics/routing-lines/' },
+    ],
+    system: [
+      { label: '全文检索', href: '/search/' },
+      { label: '关于与评测标准', href: '/about/' },
+      { label: 'RSS 订阅', href: '/rss.xml' },
+      { label: 'Sitemap 地图', href: '/sitemap-index.xml' },
+      { label: 'GEO / LLMs 索引', href: '/llms.txt' },
+    ],
+  },
+} as const;

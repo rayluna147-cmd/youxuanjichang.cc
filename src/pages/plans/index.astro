@@ -1,0 +1,262 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllBrandPlans, MARKET_MODEL_TIERS } from '../../data/brands';
+import { buildBreadcrumbSchema } from '../../lib/seo';
+
+const realPlans = getAllBrandPlans();
+const schemas = [
+  buildBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '套餐价格工作台', url: '/plans/' },
+  ]),
+];
+---
+
+<BaseLayout
+  title="套餐价格比较工作台 — 每 100GB 真实单价与预算测算器"
+  description="优选机场交互式套餐价格比较工作台：输入你的真实月流量消耗、常用节点倍率与线路偏好，实时折算每 100GB 有效单价，对比月付、季付、年付与不限时按量套餐。"
+  schemas={schemas}
+>
+  <section class="page-hero" data-accent-section="#38bdf8">
+    <div class="container">
+      <div class="eyebrow">INTERACTIVE WORKBENCH · /PLANS/</div>
+      <h1 class="display-xl" style="margin-top: 0.9rem;">
+        套餐价格<span class="spectrum-text">交互式工作台</span>
+      </h1>
+      <p class="lead">
+        穿透「大流量低价」与「隐藏倍率」营销话术。拖动下方参数，实时计算你的真实每 100GB 有效成本，并按线路类型筛选匹配方案。
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive Calculator -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="panel workbench-panel">
+        <div class="wb-controls">
+          <div class="control-group">
+            <label for="wb-usage">你的真实月均流量消耗：<strong class="mono" id="wb-usage-val">150 GB</strong></label>
+            <input id="wb-usage" type="range" min="20" max="600" step="10" value="150" />
+          </div>
+
+          <div class="control-group">
+            <label for="wb-price">目标套餐月费预算：<strong class="mono" id="wb-price-val">¥35</strong></label>
+            <input id="wb-price" type="range" min="10" max="150" step="5" value="35" />
+          </div>
+
+          <div class="control-group">
+            <label for="wb-mult">常用节点倍率：<strong class="mono" id="wb-mult-val">1.0x</strong></label>
+            <input id="wb-mult" type="range" min="1" max="3" step="0.5" value="1" />
+          </div>
+
+          <div class="control-group">
+            <label>线路类型筛选</label>
+            <div class="filter-pills" id="wb-line-filters">
+              <button type="button" class="filter-btn active" data-line="ALL">全部</button>
+              <button type="button" class="filter-btn" data-line="IEPL">IEPL 专线</button>
+              <button type="button" class="filter-btn" data-line="中转">BGP 中转</button>
+              <button type="button" class="filter-btn" data-line="直连">优化直连</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="wb-results">
+          <div class="eyebrow">LIVE CALCULATION · 实时折算结果</div>
+          <div class="metric-big mono" id="wb-unit-cost">¥23.33 / 100GB</div>
+          <p class="metric-note" id="wb-advice">
+            在 1.0x 倍率下，每月 150GB 实际消耗对应 ¥35 预算，处于主流 IEPL 专线合理性价比区间。
+          </p>
+          <div class="metric-grid">
+            <div class="mini-stat">
+              <span>等效消耗套餐流量</span>
+              <strong class="mono" id="wb-effective-gb">150 GB</strong>
+            </div>
+            <div class="mini-stat">
+              <span>推荐计费模式</span>
+              <strong id="wb-billing-rec">月付主力 + 备用按量</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Authorized Real Brand Plans OR Transparent Benchmark Models -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="eyebrow">PLAN MATRIX · 套餐对比列表</div>
+      <h2 class="display-md" style="margin: 0.7rem 0 1.4rem;">
+        {realPlans.length > 0 ? `已收录正式授权品牌套餐（${realPlans.length} 项）` : '行业参考套餐模型（白名单真实套餐待导入）'}
+      </h2>
+
+      {
+        realPlans.length > 0 ? (
+          <div class="table-wrap panel">
+            <table class="plan-table">
+              <thead>
+                <tr>
+                  <th>品牌</th>
+                  <th>套餐名称</th>
+                  <th>线路</th>
+                  <th>价格</th>
+                  <th>流量</th>
+                  <th>倍率说明</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {realPlans.map((p) => (
+                  <tr data-plan-line={p.lineType}>
+                    <td><strong>{p.brandName}</strong></td>
+                    <td>{p.name}</td>
+                    <td><span class="pill">{p.lineType}</span></td>
+                    <td class="mono">¥{p.priceCny}</td>
+                    <td class="mono">{p.trafficGb} GB</td>
+                    <td>{p.multiplierNote}</td>
+                    <td><a href={p.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" class="btn">直达官网 ↗</a></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div class="models-grid" id="models-grid">
+            {MARKET_MODEL_TIERS.map((m) => (
+              <article class="panel model-card" data-model-line={m.lineType}>
+                <div class="model-top">
+                  <span class="pill">{m.lineType} 参考模型</span>
+                  <span class="mono" style="color: var(--spectrum-accent);">¥{m.typicalPriceRange[0]} – ¥{m.typicalPriceRange[1]}</span>
+                </div>
+                <h3 style="margin: 0.8rem 0 0.4rem;">{m.label}</h3>
+                <div class="mono" style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                  典型月流量：{m.typicalTrafficGb} GB
+                </div>
+                <p style="font-size: 0.92rem; color: var(--text-secondary); margin: 0 0 0.6rem;"><strong>适用场景：</strong>{m.targetUse}</p>
+                <p style="font-size: 0.86rem; color: var(--text-muted); margin: 0;">{m.notes}</p>
+              </article>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function initWorkbench() {
+    const usageInput = document.getElementById('wb-usage') as HTMLInputElement | null;
+    const priceInput = document.getElementById('wb-price') as HTMLInputElement | null;
+    const multInput = document.getElementById('wb-mult') as HTMLInputElement | null;
+    if (!usageInput || !priceInput || !multInput) return;
+
+    const update = () => {
+      const usage = Number(usageInput.value);
+      const price = Number(priceInput.value);
+      const mult = Number(multInput.value);
+      const effectiveGb = Math.round(usage * mult);
+      const unitCost = (price / (usage / 100)).toFixed(2);
+      const adjustedUnit = ((price * mult) / (usage / 100)).toFixed(2);
+
+      const set = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+      set('wb-usage-val', `${usage} GB`);
+      set('wb-price-val', `¥${price}`);
+      set('wb-mult-val', `${mult.toFixed(1)}x`);
+      set('wb-effective-gb', `${effectiveGb} GB`);
+      set('wb-unit-cost', `¥${adjustedUnit} / 100GB`);
+
+      let rec = '月付主力 + 备用按量';
+      let advice = `按 ${mult.toFixed(1)}x 节点倍率折算，你的有效每 100GB 成本约为 ¥${adjustedUnit}（标称 ¥${unitCost}）。`;
+      if (usage <= 40) {
+        rec = '不限时按量付费';
+        advice += ' 月消耗较低，优先选择不限时按量套餐可避免月底流量清零浪费。';
+      } else if (price >= 60) {
+        rec = '大流量 IEPL 专线月付';
+        advice += ' 预算充足，建议重点核验 1x 倍率专线、设备数限制与晚高峰单线程带宽。';
+      } else {
+        advice += ' 处于主流中转 / IEPL 专线合理区间，建议先月付实测晚高峰两周。';
+      }
+      set('wb-billing-rec', rec);
+      set('wb-advice', advice);
+    };
+
+    usageInput.addEventListener('input', update);
+    priceInput.addEventListener('input', update);
+    multInput.addEventListener('input', update);
+    update();
+
+    // Line filter buttons
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('#wb-line-filters .filter-btn');
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const line = btn.dataset.line || 'ALL';
+        document.querySelectorAll<HTMLElement>('[data-model-line], [data-plan-line]').forEach((el) => {
+          const itemLine = el.dataset.modelLine || el.dataset.planLine || '';
+          el.style.display = line === 'ALL' || itemLine === line ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initWorkbench);
+</script>
+
+<style>
+  .page-hero { padding: 4rem 0 2rem; }
+  .lead { color: var(--text-secondary); max-width: 64ch; margin-top: 1rem; font-size: 1.05rem; }
+  .section-sm { padding: 2.2rem 0; }
+  .workbench-panel {
+    padding: clamp(1.5rem, 3vw, 2.4rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.2rem;
+  }
+  @media (min-width: 900px) {
+    .workbench-panel { grid-template-columns: 1.1fr 0.9fr; align-items: center; }
+  }
+  .wb-controls { display: flex; flex-direction: column; gap: 1.35rem; }
+  .control-group { display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.94rem; }
+  .control-group input[type='range'] { width: 100%; accent-color: var(--spectrum-accent); cursor: pointer; }
+  .filter-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .filter-btn {
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-hairline);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .filter-btn.active {
+    border-color: var(--spectrum-accent);
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--spectrum-accent) 16%, transparent);
+  }
+  .wb-results {
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--border-hairline);
+  }
+  .metric-big {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    font-weight: 800;
+    color: var(--spectrum-accent);
+    margin: 0.75rem 0;
+  }
+  .metric-note { color: var(--text-secondary); font-size: 0.92rem; margin: 0 0 1.2rem; }
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .mini-stat { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; }
+  .mini-stat span { color: var(--text-muted); font-size: 0.76rem; }
+  .models-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  @media (min-width: 860px) { .models-grid { grid-template-columns: repeat(2, 1fr); } }
+  .model-card { padding: 1.5rem; }
+  .model-top { display: flex; justify-content: space-between; align-items: center; }
+  .table-wrap { overflow-x: auto; padding: 1rem; }
+  .plan-table { width: 100%; border-collapse: collapse; }
+  .plan-table th, .plan-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-hairline); text-align: left; }
+</style>
